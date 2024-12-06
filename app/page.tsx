@@ -53,7 +53,7 @@ function OrbitRing({ radius, color, label, initialOffset }) {
       />
 
       {/* Sphere */}
-      <Sphere ref={sphereRef} scale={0.6} args={[0.5, 32, 32]}>
+      <Sphere ref={sphereRef} scale={0.8} args={[0.5, 32, 32]}>
         <meshStandardMaterial color={color} />
       </Sphere>
 
@@ -135,7 +135,7 @@ export default function Home() {
         {/* Orbit Rings Group */}
         <group
           ref={groupRef}
-          rotation={[rotationX, rotationY, rotationZ]}
+          rotation={[1.72, rotationY, rotationZ]}
           position={[positionX, positionY, positionZ]}
         >
           {triangleOffsets.map((offset, index) => (
