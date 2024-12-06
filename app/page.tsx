@@ -11,11 +11,24 @@ import {
   useHelper,
 } from "@react-three/drei";
 import { useControls } from "leva";
-
-function OrbitRing({ radius, color, label, initialOffset, texturePath }) {
-  const points = [];
-  const sphereRef = useRef();
-  const labelRef = useRef();
+import { Group, Mesh } from "three";
+interface OrbitRingProps {
+  radius: number;
+  color: string;
+  label: string;
+  initialOffset: number;
+  texturePath: string;
+}
+function OrbitRing({
+  radius,
+  color,
+  label,
+  initialOffset,
+  texturePath,
+}: OrbitRingProps) {
+  const points: [number, number, number][] = [];
+  const sphereRef = useRef<Mesh>(null);
+  const labelRef = useRef<Mesh>();
   const texture = useTexture(texturePath);
 
   // Generate circular points for the orbit
@@ -77,6 +90,7 @@ function OrbitRing({ radius, color, label, initialOffset, texturePath }) {
       />
 
       {/* Sphere */}
+
       <Sphere ref={sphereRef} scale={0.4} args={[0.5, 32, 32]}>
         <meshStandardMaterial map={texture} />
       </Sphere>
@@ -133,7 +147,7 @@ function CentralModel() {
 }
 
 export default function Home() {
-  const groupRef = useRef();
+  const groupRef = useRef<Group>(null);
   // const directionalLightHelper = useRef();
   // useHelper(directionalLightHelper, directionalLightHelper, "white");
   // Leva controls for group rotation and position
