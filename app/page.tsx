@@ -136,7 +136,7 @@ function OrbitRing({
 
 function CentralModel() {
   const { scene } = useGLTF("/3Dlogo.gltf");
-  const logoRef = useRef();
+  const logoRef = useRef<Mesh>();
   const [mouse, setMouse] = useState({ x: -2, y: 0 });
   // Leva controls for group rotation and position
   useEffect(() => {
