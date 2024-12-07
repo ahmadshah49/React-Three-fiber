@@ -12,7 +12,6 @@ import {
 } from "@react-three/drei";
 import { useControls } from "leva";
 import { Group, Mesh } from "three";
-import { motion } from "motion/react";
 
 interface OrbitRingProps {
   radius: number;
@@ -23,134 +22,6 @@ interface OrbitRingProps {
   globalHovered: boolean;
   setGlobalHovered: (state: boolean) => void;
 }
-// function OrbitRing({
-//   radius,
-//   color,
-//   label,
-//   initialOffset,
-//   texturePath,
-//   globalHovered,
-//   setGlobalHovered,
-// }: OrbitRingProps) {
-//   const points: [number, number, number][] = [];
-//   const sphereRef = useRef<Mesh>(null);
-//   const labelRef = useRef<Mesh>();
-//   const texture = useTexture(texturePath);
-//   // const [hovered, setHovered] = useState(false);
-//   const [currentSphereValue, setCurrentSphereValue] = useState({ x: 0, y: 0 });
-//   const [currentLabelValue, setCurrentLabelValue] = useState({ x: 0, y: 0 });
-//   for (let i = 0; i <= 100; i++) {
-//     const angle = (i / 100) * Math.PI * 2;
-//     points.push([Math.cos(angle) * radius, Math.sin(angle) * radius, 0]);
-//   }
-
-//   useFrame(({ clock }) => {
-//     // const elapsed = clock.getElapsedTime() * 0.2;
-//     // const angle = (elapsed + initialOffset) % (Math.PI * 2);
-//     // const x = Math.cos(angle) * radius;
-//     // const y = Math.sin(angle) * radius;
-
-//     if (!globalHovered) {
-//       const elapsed = clock.getElapsedTime() * 0.2;
-//       const angle = (elapsed + initialOffset) % (Math.PI * 2);
-//       const x = Math.cos(angle) * radius;
-//       const y = Math.sin(angle) * radius;
-
-//       if (sphereRef.current) {
-//         sphereRef.current.position.set(x, y, 0);
-//         setCurrentSphereValue({ x, y });
-//       }
-
-//       if (labelRef.current) {
-//         labelRef.current.position.set(x, y + 0.8, 0);
-//         setCurrentLabelValue({});
-//       }
-//     } else {
-//       // Stop sphere movement
-//       if (sphereRef.current && labelRef.current) {
-//         const spherePosition = sphereRef.current.position;
-//         labelRef.current.position.set(
-//           spherePosition.x,
-//           spherePosition.y + 0.8,
-//           spherePosition.z
-//         );
-//       }
-//       // const elapsed = clock.getElapsedTime() * 0.2;
-//       // const angle = (elapsed + initialOffset) % (Math.PI * 2);
-//       const x = Math.cos(angle) * radius;
-//       const y = Math.sin(angle) * radius;
-
-//       if (sphereRef.current) {
-//         sphereRef.current.position.set(x, y, 0);
-//       }
-
-//       if (labelRef.current) {
-//         labelRef.current.position.set(x, y + 0.8, 0);
-//       }
-//     }
-
-//     // if (sphereRef.current) {
-//     //   sphereRef.current.position.set(x, y, 0);
-//     // }
-
-//     // if (labelRef.current) {
-//     //   labelRef.current.position.set(x, y + 0.8, 0);
-//     // }
-//   });
-//   const textRef = useRef();
-
-//   const {
-//     textRotationX,
-//     textRotationY,
-//     textRotationZ,
-//     textPositionX,
-//     textPositionY,
-//     textPositionZ,
-//   } = useControls({
-//     rotationX: { value: 0, min: 0, max: Math.PI * 2, step: 0.01 },
-//     rotationY: { value: 0, min: 0, max: Math.PI * 2, step: 0.01 },
-//     rotationZ: { value: 0, min: 0, max: Math.PI * 2, step: 0.01 },
-//     positionX: { value: 0, min: -10, max: 10, step: 0.1 },
-//     positionY: { value: 0, min: -10, max: 10, step: 0.1 },
-//     positionZ: { value: 0, min: -10, max: 10, step: 0.1 },
-//     textPositionX: { value: 0, min: -10, max: 10, step: 0.1 },
-//     textPositionY: { value: 0, min: -10, max: 10, step: 0.1 },
-//     textPositionZ: { value: 0, min: -10, max: 10, step: 0.1 },
-//     textRotationX: { value: 0, min: 0, max: Math.PI * 2, step: 0.01 },
-//     textRotationY: { value: 0, min: 0, max: Math.PI * 2, step: 0.01 },
-//     textRotationZ: { value: 0, min: 0, max: Math.PI * 2, step: 0.01 },
-//   });
-
-//   return (
-//     <group>
-//       <Line points={points} color={color} lineWidth={1} dashed={false} />
-
-//       <Sphere
-//         ref={sphereRef}
-//         scale={0.4}
-//         args={[0.5, 32, 32]}
-//         // onPointerOver={() => setHovered(true)}
-//         // onPointerOut={() => setHovered(false)}
-//         onPointerOver={() => setGlobalHovered(true)}
-//         onPointerOut={() => setGlobalHovered(false)}
-//       >
-//         <meshStandardMaterial map={texture} />
-//       </Sphere>
-
-//       <Text
-//         ref={labelRef}
-//         fontSize={0.3}
-//         color="white"
-//         anchorX="center"
-//         anchorY="middle"
-//         position={[textPositionY, 40, textPositionZ]}
-//         rotation={[4.45, 6.28, 6.28]}
-//       >
-//         {label}
-//       </Text>
-//     </group>
-//   );
-// }
 function OrbitRing({
   radius,
   color,
@@ -164,43 +35,34 @@ function OrbitRing({
   const sphereRef = useRef<Mesh>(null);
   const labelRef = useRef<Mesh>();
   const texture = useTexture(texturePath);
+  // const [hovered, setHovered] = useState(false);
 
-  const [currentSphereValue, setCurrentSphereValue] = useState({ x: 0, y: 0 });
-  const [currentLabelValue, setCurrentLabelValue] = useState({ x: 0, y: 0 });
-  const [lastTime, setLastTime] = useState(0); // Store last elapsed time for the animation
-  const [isHovered, setIsHovered] = useState(false); // Track hover state
-
-  // Precompute points for the orbit
   for (let i = 0; i <= 100; i++) {
     const angle = (i / 100) * Math.PI * 2;
     points.push([Math.cos(angle) * radius, Math.sin(angle) * radius, 0]);
   }
 
   useFrame(({ clock }) => {
-    const elapsed = clock.getElapsedTime();
-    let angle = (elapsed + initialOffset) % (Math.PI * 2);
+    // const elapsed = clock.getElapsedTime() * 0.2;
+    // const angle = (elapsed + initialOffset) % (Math.PI * 2);
+    // const x = Math.cos(angle) * radius;
+    // const y = Math.sin(angle) * radius;
 
-    // When hover is off, continue rotating from the last time point
-    if (!isHovered) {
-      const deltaTime = elapsed - lastTime; // Calculate how much time has passed since hover was stopped
-      angle = (angle - deltaTime * 0.2) % (Math.PI * 2); // Adjust angle to keep smooth transition
-
+    if (!globalHovered) {
+      const elapsed = clock.getElapsedTime() * 0.2;
+      const angle = (elapsed + initialOffset) % (Math.PI * 2);
       const x = Math.cos(angle) * radius;
       const y = Math.sin(angle) * radius;
 
       if (sphereRef.current) {
         sphereRef.current.position.set(x, y, 0);
-        setCurrentSphereValue({ x, y });
       }
 
       if (labelRef.current) {
-        // Move the label position without rotation (just follow the sphere path)
-        labelRef.current.position.set(x, y + 0.8, 0); // Adjust y for label height
-        setCurrentLabelValue({ x, y });
+        labelRef.current.position.set(x, y + 0.8, 0);
       }
     } else {
-      // When hover is active, stop the animation and store the current time
-      setLastTime(elapsed);
+      // Stop sphere movement
       if (sphereRef.current && labelRef.current) {
         const spherePosition = sphereRef.current.position;
         labelRef.current.position.set(
@@ -210,6 +72,37 @@ function OrbitRing({
         );
       }
     }
+
+    // if (sphereRef.current) {
+    //   sphereRef.current.position.set(x, y, 0);
+    // }
+
+    // if (labelRef.current) {
+    //   labelRef.current.position.set(x, y + 0.8, 0);
+    // }
+  });
+  const textRef = useRef();
+
+  const {
+    textRotationX,
+    textRotationY,
+    textRotationZ,
+    textPositionX,
+    textPositionY,
+    textPositionZ,
+  } = useControls({
+    rotationX: { value: 0, min: 0, max: Math.PI * 2, step: 0.01 },
+    rotationY: { value: 0, min: 0, max: Math.PI * 2, step: 0.01 },
+    rotationZ: { value: 0, min: 0, max: Math.PI * 2, step: 0.01 },
+    positionX: { value: 0, min: -10, max: 10, step: 0.1 },
+    positionY: { value: 0, min: -10, max: 10, step: 0.1 },
+    positionZ: { value: 0, min: -10, max: 10, step: 0.1 },
+    textPositionX: { value: 0, min: -10, max: 10, step: 0.1 },
+    textPositionY: { value: 0, min: -10, max: 10, step: 0.1 },
+    textPositionZ: { value: 0, min: -10, max: 10, step: 0.1 },
+    textRotationX: { value: 0, min: 0, max: Math.PI * 2, step: 0.01 },
+    textRotationY: { value: 0, min: 0, max: Math.PI * 2, step: 0.01 },
+    textRotationZ: { value: 0, min: 0, max: Math.PI * 2, step: 0.01 },
   });
 
   return (
@@ -220,14 +113,10 @@ function OrbitRing({
         ref={sphereRef}
         scale={0.4}
         args={[0.5, 32, 32]}
-        onPointerOver={() => {
-          setGlobalHovered(true);
-          setIsHovered(true); // Set hover state to true
-        }}
-        onPointerOut={() => {
-          setGlobalHovered(false);
-          setIsHovered(false); // Set hover state to false
-        }}
+        // onPointerOver={() => setHovered(true)}
+        // onPointerOut={() => setHovered(false)}
+        onPointerOver={() => setGlobalHovered(true)}
+        onPointerOut={() => setGlobalHovered(false)}
       >
         <meshStandardMaterial map={texture} />
       </Sphere>
@@ -238,7 +127,8 @@ function OrbitRing({
         color="white"
         anchorX="center"
         anchorY="middle"
-        position={[currentLabelValue.x, currentLabelValue.y + 0.8, 0]} // Adjusted position
+        position={[textPositionY, 40, textPositionZ]}
+        rotation={[4.45, 6.28, 6.28]}
       >
         {label}
       </Text>
