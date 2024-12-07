@@ -1,5 +1,5 @@
 "use client";
-import React, { useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import {
   OrbitControls,
@@ -30,6 +30,7 @@ function OrbitRing({
   const sphereRef = useRef<Mesh>(null);
   const labelRef = useRef<Mesh>();
   const texture = useTexture(texturePath);
+  const [hovered, setHovered] = useState(false);
 
   // Generate circular points for the orbit
   for (let i = 0; i <= 100; i++) {
@@ -39,20 +40,36 @@ function OrbitRing({
 
   // UseFrame for animation
   useFrame(({ clock }) => {
-    const elapsed = clock.getElapsedTime() * 0.2; // Get time since start
-    const angle = (elapsed + initialOffset) % (Math.PI * 2); // Ensure the angle loops with an offset
+    const elapsed = clock.getElapsedTime() * 0.2;
+    const angle = (elapsed + initialOffset) % (Math.PI * 2);
     const x = Math.cos(angle) * radius;
     const y = Math.sin(angle) * radius;
 
-    // Update Sphere's position
-    if (sphereRef.current) {
-      sphereRef.current.position.set(x, y, 0);
-    }
+    if (!hovered) {
+      const elapsed = clock.getElapsedTime() * 0.2;
+      const angle = (elapsed + initialOffset) % (Math.PI * 2);
+      const x = Math.cos(angle) * radius;
+      const y = Math.sin(angle) * radius;
 
-    // Update label's position (slightly above the Sphere)
-    if (labelRef.current) {
-      labelRef.current.position.set(x, y + 0.8, 0);
+      // Update Sphere's position
+      if (sphereRef.current) {
+        sphereRef.current.position.set(x, y, 0);
+      }
+
+      // Update label's position (slightly above the Sphere)
+      if (labelRef.current) {
+        labelRef.current.position.set(x, y + 0.8, 0);
+      }
     }
+    // Update Sphere's position
+    // if (sphereRef.current) {
+    //   sphereRef.current.position.set(x, y, 0);
+    // }
+
+    // // Update label's position (slightly above the Sphere)
+    // if (labelRef.current) {
+    //   labelRef.current.position.set(x, y + 0.8, 0);
+    // }
   });
   const textRef = useRef();
 
@@ -91,7 +108,13 @@ function OrbitRing({
 
       {/* Sphere */}
 
-      <Sphere ref={sphereRef} scale={0.4} args={[0.5, 32, 32]}>
+      <Sphere
+        ref={sphereRef}
+        scale={0.4}
+        args={[0.5, 32, 32]}
+        onPointerOver={() => setHovered(true)} // Hover start
+        onPointerOut={() => setHovered(false)}
+      >
         <meshStandardMaterial map={texture} />
       </Sphere>
 
@@ -114,8 +137,24 @@ function OrbitRing({
 function CentralModel() {
   const { scene } = useGLTF("/3Dlogo.gltf");
   const logoRef = useRef();
-
+  const [mouse, setMouse] = useState({ x: -2, y: 0 });
   // Leva controls for group rotation and position
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      const x = (e.clientX / window.innerWidth - 0.7) * 5;
+      const y = -(e.clientY / window.innerHeight - 0.5) * 2;
+      setMouse({ x, y });
+    };
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.addEventListener("mousemove", handleMouseMove);
+  }, []);
+  useFrame(() => {
+    if (logoRef.current) {
+      const { x, y } = mouse;
+      logoRef.current.rotation.x = y * 0.2;
+      logoRef.current.rotation.y = x * 0.2;
+    }
+  });
   const {
     rotationModelX,
     rotationModelY,
@@ -137,11 +176,12 @@ function CentralModel() {
       ref={logoRef}
       object={scene}
       scale={60}
-      rotation={[rotationModelX, 2.71, rotationModelZ]}
+      rotation={[rotationModelX, -2.71, rotationModelZ]}
       // rotation={[rotationModelX, rotationModelY, rotationModelZ]}
       // Enable shadow casting
-      castShadow={true} // Enable casting shadow from model
-      receiveShadow={true}
+      // Enable casting shadow from model
+
+      receiveShadow
     />
   );
 }
@@ -183,14 +223,23 @@ export default function Home() {
 
   return (
     <div className="bg-black w-screen h-screen">
-      <Canvas camera={{ position: [-3, 2, 18], fov: 50 }} shadows>
+      <Canvas camera={{ position: [-3, 2, 18], fov: 50 }} shadows={"soft"}>
         <directionalLight
           position={[10, 4.3, 0.9]}
           intensity={1}
-
+          // castShadow={true}
+          castShadow={true}
+          shadow-mapSize-width={1024}
+          shadow-mapSize-height={1024}
+          shadow-camera-near={1}
+          shadow-camera-far={50}
+          shadow-camera-left={-10}
+          shadow-camera-right={10}
+          shadow-camera-top={10}
+          shadow-camera-bottom={-10}
           // ref={directionalLightHelper}
         />
-        <ambientLight intensity={1} castShadow={true} />
+        <ambientLight intensity={1} />
 
         <group
           ref={groupRef}
