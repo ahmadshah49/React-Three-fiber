@@ -12,7 +12,7 @@ import {
 } from "@react-three/drei";
 import { useControls } from "leva";
 import { Group, Mesh } from "three";
-
+import { useSpring, a } from "@react-spring/three";
 interface OrbitRingProps {
   radius: number;
   color: string;
@@ -36,6 +36,7 @@ function OrbitRing({
   const labelRef = useRef<Mesh>();
   const texture = useTexture(texturePath);
   // const [hovered, setHovered] = useState(false);
+  const [currentAngle, setCurrentAngle] = useState(initialOffset);
 
   for (let i = 0; i <= 100; i++) {
     const angle = (i / 100) * Math.PI * 2;
@@ -43,43 +44,41 @@ function OrbitRing({
   }
 
   useFrame(({ clock }) => {
-    // const elapsed = clock.getElapsedTime() * 0.2;
-    // const angle = (elapsed + initialOffset) % (Math.PI * 2);
-    // const x = Math.cos(angle) * radius;
-    // const y = Math.sin(angle) * radius;
-
     if (!globalHovered) {
       const elapsed = clock.getElapsedTime() * 0.2;
+      console.log("Elapsed");
+
       const angle = (elapsed + initialOffset) % (Math.PI * 2);
+      console.log("Angle", angle);
+
       const x = Math.cos(angle) * radius;
       const y = Math.sin(angle) * radius;
 
       if (sphereRef.current) {
+        // console.log("Line No 56", sphereRef.current.position);
         sphereRef.current.position.set(x, y, 0);
       }
 
       if (labelRef.current) {
-        labelRef.current.position.set(x, y + 0.8, 0);
+        // console.log("Line No 63", labelRef.current.position);
+        labelRef.current.position.set(x, y + 0.8, -1);
       }
     } else {
-      // Stop sphere movement
       if (sphereRef.current && labelRef.current) {
+        // console.log(
+        //   "Line No 70",
+        //   sphereRef.current.position,
+        //   labelRef.current.position
+        // );
         const spherePosition = sphereRef.current.position;
+        console.log("Line No 75", spherePosition);
         labelRef.current.position.set(
           spherePosition.x,
           spherePosition.y + 0.8,
-          spherePosition.z
+          -1
         );
       }
     }
-
-    // if (sphereRef.current) {
-    //   sphereRef.current.position.set(x, y, 0);
-    // }
-
-    // if (labelRef.current) {
-    //   labelRef.current.position.set(x, y + 0.8, 0);
-    // }
   });
   const textRef = useRef();
 
@@ -266,7 +265,7 @@ export default function Home() {
 
         <CentralModel />
 
-        {/* <OrbitControls /> */}
+        <OrbitControls />
       </Canvas>
     </div>
   );
