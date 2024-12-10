@@ -2,15 +2,27 @@
 import { useEffect, useRef, useState } from "react";
 import { useSpring, animated } from "@react-spring/three";
 import { Canvas, useFrame, useLoader } from "@react-three/fiber";
-import { Line, OrbitControls, Text, useGLTF } from "@react-three/drei";
+import {
+  ContactShadows,
+  Line,
+  OrbitControls,
+  Text,
+  useGLTF,
+  useHelper,
+} from "@react-three/drei";
 import { useControls } from "leva";
-import { Mesh, TextureLoader } from "three";
+import {
+  DirectionalLightHelper,
+  HemisphereLightHelper,
+  Mesh,
+  PointLightHelper,
+  TextureLoader,
+} from "three";
 
-// Generate points for the orbital line
 const generatePoints = (radius: number) => {
   const points: [number, number, number][] = [];
-  for (let i = 0; i <= 100; i++) {
-    const angle = (i / 100) * Math.PI * 2;
+  for (let i = 0; i <= 1000; i++) {
+    const angle = (i / 1000) * Math.PI * 2;
     points.push([Math.cos(angle) * radius, Math.sin(angle) * radius, 0]);
   }
   return points;
@@ -31,9 +43,8 @@ const generatePoints = (radius: number) => {
 //   paused: boolean;
 //   setPaused: (state: boolean) => void;
 //   label: string;
-//   texture: string; // Texture URL
+//   texture: string;
 // }) => {
-//   // Animate the angle around the orbit
 //   const { angle } = useSpring({
 //     from: { angle: offset },
 //     to: { angle: Math.PI * 2 + offset },
@@ -74,7 +85,7 @@ const generatePoints = (radius: number) => {
 //     textRotationZ: { value: 0, min: 0, max: Math.PI * 2, step: 0.01 },
 //   });
 
-//   const loadedTexture = useLoader(TextureLoader, texture); // Load texture
+//   const loadedTexture = useLoader(TextureLoader, texture);
 
 //   return (
 //     <group
@@ -85,27 +96,25 @@ const generatePoints = (radius: number) => {
 //       {/* Orbital line */}
 //       <Line points={points} color="white" lineWidth={1} />
 
-//       {/* Animated sphere with texture */}
 //       <animated.mesh
 //         position={angle.to((a) => [
-//           Math.cos(a) * radius, // Sphere x-coordinate
-//           Math.sin(a) * radius, // Sphere y-coordinate
-//           0, // Sphere z-coordinate
+//           Math.cos(a) * radius,
+//           Math.sin(a) * radius,
+//           0,
 //         ])}
 //         scale={0.3}
 //         onPointerEnter={handlePointerEnter}
 //         onPointerLeave={handlePointerLeave}
 //       >
 //         <sphereGeometry args={[0.7, 32, 32]} />
-//         <meshStandardMaterial map={loadedTexture} /> {/* Apply texture */}
+//         <meshStandardMaterial map={loadedTexture} />
 //       </animated.mesh>
 
-//       {/* Animated text */}
 //       <animated.mesh
 //         position={angle.to((a) => [
-//           Math.cos(a) * radius, // Text x-coordinate
-//           Math.sin(a) * radius + 1.5, // Slightly above the sphere
-//           0, // Text z-coordinate
+//           Math.cos(a) * radius,
+//           Math.sin(a) * radius + 1.5,
+//           0,
 //         ])}
 //       >
 //         <Text
@@ -141,7 +150,6 @@ const OrbitalScene = ({
   label: string;
   texture: string;
 }) => {
-  // Animate the angle around the orbit
   const { angle } = useSpring({
     from: { angle: offset },
     to: { angle: Math.PI * 2 + offset },
@@ -160,38 +168,37 @@ const OrbitalScene = ({
     setPaused(false);
   };
 
-  const loadedTexture = useLoader(TextureLoader, texture); // Load texture
+  const loadedTexture = useLoader(TextureLoader, texture);
 
   return (
     <group rotation={[1.73, 0.79, 0]} position={[0, 0.6, 0]}>
-      {/* Orbital line */}
-      <Line points={points} color="white" lineWidth={1} />
+      <Line castShadow points={points} color="white" lineWidth={1} />
 
-      {/* Animated sphere with texture */}
       <animated.mesh
+        castShadow
         position={angle.to((a) => [
-          Math.cos(a) * radius, // Sphere x-coordinate
-          Math.sin(a) * radius, // Sphere y-coordinate
-          0, // Sphere z-coordinate
+          Math.cos(a) * radius,
+          Math.sin(a) * radius,
+          0,
         ])}
         scale={0.3}
         onPointerEnter={handlePointerEnter}
         onPointerLeave={handlePointerLeave}
       >
         <sphereGeometry args={[0.7, 32, 32]} />
-        <meshStandardMaterial map={loadedTexture} /> {/* Apply texture */}
+        <meshStandardMaterial map={loadedTexture} />
       </animated.mesh>
 
-      {/* Animated text */}
       <animated.mesh
+        castShadow
         position={angle.to((a) => [
-          Math.cos(a) * radius, // Text x-coordinate
-          Math.sin(a) * radius + Math.sin(a) * 0.5, // Dynamic offset along Y-axis
-          Math.cos(a) * 0.5, // Dynamic offset along Z-axis
+          Math.cos(a) * radius,
+          Math.sin(a) * radius + Math.sin(a) * 0.5,
+          Math.cos(a) * 0.5,
         ])}
       >
         <Text
-          rotation={[4.29, 0, -0.8]} // You can adjust these rotation values as needed
+          rotation={[4.29, 0, -0.8]}
           fontSize={0.3}
           color="white"
           anchorX="center"
@@ -212,7 +219,7 @@ function CentralModel() {
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       const x = (e.clientX / window.innerWidth - 0.7) * 5;
-      const y = -(e.clientY / window.innerHeight - 0.5) * 2;
+      const y = -(e.clientY / window.innerHeight - 0.6) * 5;
       setMouse({ x, y });
     };
 
@@ -221,7 +228,7 @@ function CentralModel() {
   }, []);
 
   const springProps = useSpring<{ rotation: [number, number, number] }>({
-    rotation: [0, mouse.x * 0.2, 0],
+    rotation: [-mouse.y * 0.08, mouse.x * 0.2, 0],
     config: { tension: 170, friction: 26 },
   });
 
@@ -249,11 +256,12 @@ function CentralModel() {
       scale={60}
       rotation={springProps.rotation}
       position={[positionX, positionY, positionZ]}
-      receiveShadow
+      receiveShadow={true}
+      castShadow={true}
     />
   );
 }
-export default function Page() {
+function Scene() {
   const [paused, setPaused] = useState(false);
   const triangleOffsets = [0, (2 / 3) * Math.PI, (4 / 3) * Math.PI];
   const labels = ["Efficiency", "Reliability", "Creativity"];
@@ -262,30 +270,71 @@ export default function Page() {
     "/textures/texture2.jpg",
     "/textures/texture3.jpg",
   ];
+  const directionalLightRef = useRef();
+  // useHelper(directionalLightRef, DirectionalLightHelper);
 
   return (
+    <>
+      {/* <Canvas camera={{ position: [-3, 2, 17], fov: 50 }} shadows={"soft"}> */}
+      <directionalLight
+        position={[5.9, 6.8, -3.7]}
+        intensity={5}
+        castShadow
+        // ref={directionalLightRef}
+      />
+      {/* <directionalLight
+        position={[5.9, 6.8, -3.7]}
+        intensity={5}
+        castShadow
+        ref={directionalLightRef}
+      /> */}
+      <ambientLight intensity={0.8} />
+      {/* <hemisphereLight
+        position={[5.9, 6.8, -3.7]}
+        intensity={0.5}
+        castShadow
+        ref={directionalLightRef2}
+      /> */}
+      {triangleOffsets.map((offset, index) => (
+        <OrbitalScene
+          key={index}
+          radius={5 + index * 0.6}
+          speed={18000}
+          offset={offset}
+          paused={paused}
+          setPaused={setPaused}
+          label={labels[index]}
+          texture={textures[index]}
+        />
+      ))}
+
+      <CentralModel />
+    </>
+  );
+}
+export default function Page() {
+  // const [paused, setPaused] = useState(false);
+  // const triangleOffsets = [0, (2 / 3) * Math.PI, (4 / 3) * Math.PI];
+  // const labels = ["Efficiency", "Reliability", "Creativity"];
+  // const textures = [
+  //   "/textures/texture1.png",
+  //   "/textures/texture2.jpg",
+  //   "/textures/texture3.jpg",
+  // ];
+  // const directionalLightRef = useRef();
+  // useHelper(directionalLightRef, DirectionalLightHelper);
+  return (
     <div className="bg-black h-screen">
-      <Canvas camera={{ position: [-3, 2, 17], fov: 50 }} shadows={"soft"}>
+      <Canvas camera={{ position: [-3, 2, 17], fov: 50 }}>
         {/* <Canvas camera={{ position: [-3, 2, 17], fov: 50 }} shadows={"soft"}> */}
-        <directionalLight
+        {/* <directionalLight
           position={[5.9, 6.8, -3.7]}
-          // position={[10, 4.3, 0.9]}
           intensity={5}
-          // castShadow={true}
-          castShadow={true}
-          shadow-mapSize-width={1024}
-          shadow-mapSize-height={1024}
-          shadow-camera-near={1}
-          shadow-camera-far={50}
-          shadow-camera-left={-10}
-          shadow-camera-right={10}
-          shadow-camera-top={10}
-          shadow-camera-bottom={-10}
-          // ref={directionalLightHelper}
+          castShadow
+          ref={directionalLightRef}
         />
         <ambientLight intensity={0.8} />
 
-        {/* Orbital Scenes with textures */}
         {triangleOffsets.map((offset, index) => (
           <OrbitalScene
             key={index}
@@ -295,11 +344,12 @@ export default function Page() {
             paused={paused}
             setPaused={setPaused}
             label={labels[index]}
-            texture={textures[index]} // Pass texture URL
+            texture={textures[index]}
           />
         ))}
-        <CentralModel />
-        {/* <OrbitControls /> */}
+
+        <CentralModel /> */}
+        <Scene />
       </Canvas>
     </div>
   );
