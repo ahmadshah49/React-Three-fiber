@@ -12,7 +12,7 @@ import {
 } from "@react-three/drei";
 import { useControls } from "leva";
 import { Group, Mesh } from "three";
-import { useSpring, a } from "@react-spring/three";
+import { useSpring, animated } from "@react-spring/three";
 interface OrbitRingProps {
   radius: number;
   color: string;
@@ -37,7 +37,27 @@ function OrbitRing({
   const texture = useTexture(texturePath);
   // const [hovered, setHovered] = useState(false);
   const [currentAngle, setCurrentAngle] = useState(initialOffset);
-
+  const [springs, api] = useSpring(
+    () => ({
+      scale: 1,
+      position: [0, 0],
+      color: "#ff6d6d",
+      config: (key) => {
+        switch (key) {
+          case "scale":
+            return {
+              mass: 4,
+              friction: 10,
+            };
+          case "position":
+            return { mass: 4, friction: 220 };
+          default:
+            return {};
+        }
+      },
+    }),
+    []
+  );
   for (let i = 0; i <= 100; i++) {
     const angle = (i / 100) * Math.PI * 2;
     points.push([Math.cos(angle) * radius, Math.sin(angle) * radius, 0]);
@@ -110,10 +130,8 @@ function OrbitRing({
 
       <Sphere
         ref={sphereRef}
-        scale={0.4}
+        scale={globalHovered ? 0.4 : 1}
         args={[0.5, 32, 32]}
-        // onPointerOver={() => setHovered(true)}
-        // onPointerOut={() => setHovered(false)}
         onPointerOver={() => setGlobalHovered(true)}
         onPointerOut={() => setGlobalHovered(false)}
       >
