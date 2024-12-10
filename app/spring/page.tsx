@@ -16,114 +16,6 @@ const generatePoints = (radius: number) => {
   return points;
 };
 
-const OrbitalScene = ({
-  radius,
-  speed,
-  offset,
-  paused,
-  setPaused,
-  label,
-  texture, // Added texture prop
-}: {
-  radius: number;
-  speed: number;
-  offset: number;
-  paused: boolean;
-  setPaused: (state: boolean) => void;
-  label: string;
-  texture: string; // Texture URL
-}) => {
-  // Animate the angle around the orbit
-  const { angle } = useSpring({
-    from: { angle: offset },
-    to: { angle: Math.PI * 2 + offset },
-    loop: true,
-    pause: paused,
-    config: { duration: speed },
-  });
-
-  const points = generatePoints(radius);
-
-  const handlePointerEnter = () => {
-    setPaused(true);
-  };
-
-  const handlePointerLeave = () => {
-    setPaused(false);
-  };
-
-  const {
-    textRotationX,
-    textRotationY,
-    textRotationZ,
-    textPositionX,
-    textPositionY,
-    textPositionZ,
-  } = useControls({
-    rotationX: { value: 0, min: 0, max: Math.PI * 2, step: 0.01 },
-    rotationY: { value: 0, min: 0, max: Math.PI * 2, step: 0.01 },
-    rotationZ: { value: 0, min: 0, max: Math.PI * 2, step: 0.01 },
-    positionX: { value: 0, min: -10, max: 10, step: 0.1 },
-    positionY: { value: 0, min: -10, max: 10, step: 0.1 },
-    positionZ: { value: 0, min: -10, max: 10, step: 0.1 },
-    textPositionX: { value: 0, min: -10, max: 10, step: 0.1 },
-    textPositionY: { value: 0, min: -10, max: 10, step: 0.1 },
-    textPositionZ: { value: 0, min: -10, max: 10, step: 0.1 },
-    textRotationX: { value: 0, min: 0, max: Math.PI * 2, step: 0.01 },
-    textRotationY: { value: 0, min: 0, max: Math.PI * 2, step: 0.01 },
-    textRotationZ: { value: 0, min: 0, max: Math.PI * 2, step: 0.01 },
-  });
-
-  const loadedTexture = useLoader(TextureLoader, texture); // Load texture
-
-  return (
-    <group
-      rotation={[1.73, 0.79, 0]}
-      // rotation={[1.78, 0.82, rotationZ]}
-      position={[0, 0.6, 0]}
-    >
-      {/* Orbital line */}
-      <Line points={points} color="white" lineWidth={1} />
-
-      {/* Animated sphere with texture */}
-      <animated.mesh
-        position={angle.to((a) => [
-          Math.cos(a) * radius, // Sphere x-coordinate
-          Math.sin(a) * radius, // Sphere y-coordinate
-          0, // Sphere z-coordinate
-        ])}
-        scale={0.3}
-        onPointerEnter={handlePointerEnter}
-        onPointerLeave={handlePointerLeave}
-      >
-        <sphereGeometry args={[0.7, 32, 32]} />
-        <meshStandardMaterial map={loadedTexture} /> {/* Apply texture */}
-      </animated.mesh>
-
-      {/* Animated text */}
-      <animated.mesh
-        position={angle.to((a) => [
-          Math.cos(a) * radius, // Text x-coordinate
-          Math.sin(a) * radius + 1.5, // Slightly above the sphere
-          0, // Text z-coordinate
-        ])}
-      >
-        <Text
-          rotation={[4.29, textRotationY, -0.8]}
-          position={[textPositionX, textPositionY, textPositionZ]}
-          //   rotation={[4.44, textRotationY, textRotationZ]}
-          //   position={[textPositionX, -0.9, -0.9]}
-          fontSize={0.3}
-          color="white"
-          anchorX="center"
-          anchorY="middle"
-        >
-          {label}
-        </Text>
-      </animated.mesh>
-    </group>
-  );
-};
 // const OrbitalScene = ({
 //   radius,
 //   speed,
@@ -131,7 +23,7 @@ const OrbitalScene = ({
 //   paused,
 //   setPaused,
 //   label,
-//   texture,
+//   texture, // Added texture prop
 // }: {
 //   radius: number;
 //   speed: number;
@@ -139,7 +31,7 @@ const OrbitalScene = ({
 //   paused: boolean;
 //   setPaused: (state: boolean) => void;
 //   label: string;
-//   texture: string;
+//   texture: string; // Texture URL
 // }) => {
 //   // Animate the angle around the orbit
 //   const { angle } = useSpring({
@@ -160,10 +52,36 @@ const OrbitalScene = ({
 //     setPaused(false);
 //   };
 
+//   const {
+//     textRotationX,
+//     textRotationY,
+//     textRotationZ,
+//     textPositionX,
+//     textPositionY,
+//     textPositionZ,
+//   } = useControls({
+//     rotationX: { value: 0, min: 0, max: Math.PI * 2, step: 0.01 },
+//     rotationY: { value: 0, min: 0, max: Math.PI * 2, step: 0.01 },
+//     rotationZ: { value: 0, min: 0, max: Math.PI * 2, step: 0.01 },
+//     positionX: { value: 0, min: -10, max: 10, step: 0.1 },
+//     positionY: { value: 0, min: -10, max: 10, step: 0.1 },
+//     positionZ: { value: 0, min: -10, max: 10, step: 0.1 },
+//     textPositionX: { value: 0, min: -10, max: 10, step: 0.1 },
+//     textPositionY: { value: 0, min: -10, max: 10, step: 0.1 },
+//     textPositionZ: { value: 0, min: -10, max: 10, step: 0.1 },
+//     textRotationX: { value: 0, min: 0, max: Math.PI * 2, step: 0.01 },
+//     textRotationY: { value: 0, min: 0, max: Math.PI * 2, step: 0.01 },
+//     textRotationZ: { value: 0, min: 0, max: Math.PI * 2, step: 0.01 },
+//   });
+
 //   const loadedTexture = useLoader(TextureLoader, texture); // Load texture
 
 //   return (
-//     <group rotation={[1.73, 0.79, 0]} position={[0, 0.6, 0]}>
+//     <group
+//       rotation={[1.73, 0.79, 0]}
+//       // rotation={[1.78, 0.82, rotationZ]}
+//       position={[0, 0.6, 0]}
+//     >
 //       {/* Orbital line */}
 //       <Line points={points} color="white" lineWidth={1} />
 
@@ -186,12 +104,15 @@ const OrbitalScene = ({
 //       <animated.mesh
 //         position={angle.to((a) => [
 //           Math.cos(a) * radius, // Text x-coordinate
-//           Math.sin(a) * radius + Math.sin(a) * 0.5, // Dynamic offset along Y-axis
-//           Math.cos(a) * 0.5, // Dynamic offset along Z-axis
+//           Math.sin(a) * radius + 1.5, // Slightly above the sphere
+//           0, // Text z-coordinate
 //         ])}
 //       >
 //         <Text
-//           rotation={[4.29, 0, 0]} // You can adjust these rotation values as needed
+//           rotation={[4.29, textRotationY, -0.8]}
+//           position={[textPositionX, textPositionY, textPositionZ]}
+//           //   rotation={[4.44, textRotationY, textRotationZ]}
+//           //   position={[textPositionX, -0.9, -0.9]}
 //           fontSize={0.3}
 //           color="white"
 //           anchorX="center"
@@ -203,6 +124,85 @@ const OrbitalScene = ({
 //     </group>
 //   );
 // };
+const OrbitalScene = ({
+  radius,
+  speed,
+  offset,
+  paused,
+  setPaused,
+  label,
+  texture,
+}: {
+  radius: number;
+  speed: number;
+  offset: number;
+  paused: boolean;
+  setPaused: (state: boolean) => void;
+  label: string;
+  texture: string;
+}) => {
+  // Animate the angle around the orbit
+  const { angle } = useSpring({
+    from: { angle: offset },
+    to: { angle: Math.PI * 2 + offset },
+    loop: true,
+    pause: paused,
+    config: { duration: speed },
+  });
+
+  const points = generatePoints(radius);
+
+  const handlePointerEnter = () => {
+    setPaused(true);
+  };
+
+  const handlePointerLeave = () => {
+    setPaused(false);
+  };
+
+  const loadedTexture = useLoader(TextureLoader, texture); // Load texture
+
+  return (
+    <group rotation={[1.73, 0.79, 0]} position={[0, 0.6, 0]}>
+      {/* Orbital line */}
+      <Line points={points} color="white" lineWidth={1} />
+
+      {/* Animated sphere with texture */}
+      <animated.mesh
+        position={angle.to((a) => [
+          Math.cos(a) * radius, // Sphere x-coordinate
+          Math.sin(a) * radius, // Sphere y-coordinate
+          0, // Sphere z-coordinate
+        ])}
+        scale={0.3}
+        onPointerEnter={handlePointerEnter}
+        onPointerLeave={handlePointerLeave}
+      >
+        <sphereGeometry args={[0.7, 32, 32]} />
+        <meshStandardMaterial map={loadedTexture} /> {/* Apply texture */}
+      </animated.mesh>
+
+      {/* Animated text */}
+      <animated.mesh
+        position={angle.to((a) => [
+          Math.cos(a) * radius, // Text x-coordinate
+          Math.sin(a) * radius + Math.sin(a) * 0.5, // Dynamic offset along Y-axis
+          Math.cos(a) * 0.5, // Dynamic offset along Z-axis
+        ])}
+      >
+        <Text
+          rotation={[4.29, 0, -0.8]} // You can adjust these rotation values as needed
+          fontSize={0.3}
+          color="white"
+          anchorX="center"
+          anchorY="middle"
+        >
+          {label}
+        </Text>
+      </animated.mesh>
+    </group>
+  );
+};
 
 function CentralModel() {
   const { scene } = useGLTF("/3Dlogo.gltf");
@@ -290,7 +290,7 @@ export default function Page() {
           <OrbitalScene
             key={index}
             radius={5 + index * 0.6}
-            speed={13000}
+            speed={18000}
             offset={offset}
             paused={paused}
             setPaused={setPaused}
