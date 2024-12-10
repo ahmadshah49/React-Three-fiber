@@ -139,7 +139,7 @@ function CentralModel() {
   }, []);
 
   const springProps = useSpring<{ rotation: [number, number, number] }>({
-    rotation: [mouse.y * 0.2, mouse.x * 0.2, 0],
+    rotation: [0, mouse.x * 0.2, 0],
     config: { tension: 170, friction: 26 },
   });
 
