@@ -92,7 +92,7 @@ const OrbitalScene = ({
           Math.sin(a) * radius, // Sphere y-coordinate
           0, // Sphere z-coordinate
         ])}
-        scale={0.4}
+        scale={0.3}
         onPointerEnter={handlePointerEnter}
         onPointerLeave={handlePointerLeave}
       >
@@ -109,9 +109,11 @@ const OrbitalScene = ({
         ])}
       >
         <Text
-          rotation={[4.44, textRotationY, textRotationZ]}
-          position={[textPositionX, -0.9, -0.9]}
-          fontSize={0.4}
+          rotation={[4.29, textRotationY, -0.8]}
+          position={[textPositionX, textPositionY, textPositionZ]}
+          //   rotation={[4.44, textRotationY, textRotationZ]}
+          //   position={[textPositionX, -0.9, -0.9]}
+          fontSize={0.3}
           color="white"
           anchorX="center"
           anchorY="middle"
@@ -122,6 +124,86 @@ const OrbitalScene = ({
     </group>
   );
 };
+// const OrbitalScene = ({
+//   radius,
+//   speed,
+//   offset,
+//   paused,
+//   setPaused,
+//   label,
+//   texture,
+// }: {
+//   radius: number;
+//   speed: number;
+//   offset: number;
+//   paused: boolean;
+//   setPaused: (state: boolean) => void;
+//   label: string;
+//   texture: string;
+// }) => {
+//   // Animate the angle around the orbit
+//   const { angle } = useSpring({
+//     from: { angle: offset },
+//     to: { angle: Math.PI * 2 + offset },
+//     loop: true,
+//     pause: paused,
+//     config: { duration: speed },
+//   });
+
+//   const points = generatePoints(radius);
+
+//   const handlePointerEnter = () => {
+//     setPaused(true);
+//   };
+
+//   const handlePointerLeave = () => {
+//     setPaused(false);
+//   };
+
+//   const loadedTexture = useLoader(TextureLoader, texture); // Load texture
+
+//   return (
+//     <group rotation={[1.73, 0.79, 0]} position={[0, 0.6, 0]}>
+//       {/* Orbital line */}
+//       <Line points={points} color="white" lineWidth={1} />
+
+//       {/* Animated sphere with texture */}
+//       <animated.mesh
+//         position={angle.to((a) => [
+//           Math.cos(a) * radius, // Sphere x-coordinate
+//           Math.sin(a) * radius, // Sphere y-coordinate
+//           0, // Sphere z-coordinate
+//         ])}
+//         scale={0.3}
+//         onPointerEnter={handlePointerEnter}
+//         onPointerLeave={handlePointerLeave}
+//       >
+//         <sphereGeometry args={[0.7, 32, 32]} />
+//         <meshStandardMaterial map={loadedTexture} /> {/* Apply texture */}
+//       </animated.mesh>
+
+//       {/* Animated text */}
+//       <animated.mesh
+//         position={angle.to((a) => [
+//           Math.cos(a) * radius, // Text x-coordinate
+//           Math.sin(a) * radius + Math.sin(a) * 0.5, // Dynamic offset along Y-axis
+//           Math.cos(a) * 0.5, // Dynamic offset along Z-axis
+//         ])}
+//       >
+//         <Text
+//           rotation={[4.29, 0, 0]} // You can adjust these rotation values as needed
+//           fontSize={0.3}
+//           color="white"
+//           anchorX="center"
+//           anchorY="middle"
+//         >
+//           {label}
+//         </Text>
+//       </animated.mesh>
+//     </group>
+//   );
+// };
+
 function CentralModel() {
   const { scene } = useGLTF("/3Dlogo.gltf");
   const logoRef = useRef<Mesh>();
@@ -183,7 +265,8 @@ export default function Page() {
 
   return (
     <div className="bg-black h-screen">
-      <Canvas camera={{ position: [-3, 2, 18], fov: 50 }} shadows={"soft"}>
+      <Canvas camera={{ position: [-3, 2, 17], fov: 50 }} shadows={"soft"}>
+        {/* <Canvas camera={{ position: [-3, 2, 17], fov: 50 }} shadows={"soft"}> */}
         <directionalLight
           position={[5.9, 6.8, -3.7]}
           // position={[10, 4.3, 0.9]}
