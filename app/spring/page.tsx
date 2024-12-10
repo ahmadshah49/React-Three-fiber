@@ -207,7 +207,7 @@ export default function Page() {
           <OrbitalScene
             key={index}
             radius={5 + index * 0.6}
-            speed={10000}
+            speed={13000}
             offset={offset}
             paused={paused}
             setPaused={setPaused}
