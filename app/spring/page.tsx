@@ -133,16 +133,16 @@ function CentralModel() {
       const y = -(e.clientY / window.innerHeight - 0.5) * 2;
       setMouse({ x, y });
     };
+
     window.addEventListener("mousemove", handleMouseMove);
     return () => window.addEventListener("mousemove", handleMouseMove);
   }, []);
-  useFrame(() => {
-    if (logoRef.current) {
-      const { x, y } = mouse;
-      logoRef.current.rotation.x = y * 0.2;
-      logoRef.current.rotation.y = x * 0.2;
-    }
+
+  const springProps = useSpring<{ rotation: [number, number, number] }>({
+    rotation: [mouse.y * 0.2, mouse.x * 0.2, 0],
+    config: { tension: 170, friction: 26 },
   });
+
   const {
     rotationModelX,
     rotationModelY,
@@ -160,15 +160,13 @@ function CentralModel() {
   });
 
   return (
-    <primitive
+    //@ts-expect-error
+    <animated.primitive
       ref={logoRef}
       object={scene}
       scale={60}
-      rotation={[rotationModelX, -2.71, rotationModelZ]}
-      // rotation={[rotationModelX, rotationModelY, rotationModelZ]}
-      // Enable shadow casting
-      // Enable casting shadow from model
-
+      rotation={springProps.rotation}
+      position={[positionX, positionY, positionZ]}
       receiveShadow
     />
   );
@@ -189,7 +187,7 @@ export default function Page() {
         <directionalLight
           position={[5.9, 6.8, -3.7]}
           // position={[10, 4.3, 0.9]}
-          intensity={2}
+          intensity={5}
           // castShadow={true}
           castShadow={true}
           shadow-mapSize-width={1024}
