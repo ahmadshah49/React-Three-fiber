@@ -3,6 +3,7 @@ import { animated, useSpring } from "@react-spring/three";
 import { Line, Text, useGLTF } from "@react-three/drei";
 import { Canvas, useLoader } from "@react-three/fiber";
 import { useControls } from "leva";
+import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { Mesh, TextureLoader } from "three";
 
@@ -159,10 +160,28 @@ function Scene() {
 }
 export default function Page() {
   return (
-    <div className="bg-gray-400 w-full h-screen flex justify-between ">
+    <div className="bg-[#130D29] w-full h-screen flex justify-between ">
+      <span className=" absolute left-[25%] top-[10%] w-fit animate-bounceY">
+        <Image
+          src={"/pictures/mirror1.png"}
+          width={1000}
+          height={1000}
+          alt="Mirror"
+          className="w-[154px] h-[172px]"
+        />
+      </span>
       <Canvas camera={{ position: [-3, 2, 17], fov: 50 }}>
         <Scene />
       </Canvas>
+      <span className=" absolute right-[25%] bottom-[30%] w-fit animate-bounceY">
+        <Image
+          src={"/pictures/mirror2.png"}
+          width={1000}
+          height={1000}
+          alt="Mirror"
+          className="w-[115px] h-[125px]"
+        />
+      </span>
     </div>
   );
 }
