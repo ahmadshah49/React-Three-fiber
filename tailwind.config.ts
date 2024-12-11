@@ -17,9 +17,14 @@ const config: Config = {
           "0%, 100%": { transform: "translateY(-20px)" },
           "50%": { transform: "translateY(20px)" },
         },
+        bounceYBack: {
+          "0%, 100%": { transform: "translateY(20px)" },
+          "50%": { transform: "translateY(-20px)" },
+        },
       },
       animation: {
         bounceY: "bounceY 2s ease-in-out infinite",
+        bounceYBack: "bounceY 2s ease-in-out infinite",
       },
     },
   },
