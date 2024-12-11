@@ -173,7 +173,7 @@ export default function Page() {
       <Canvas camera={{ position: [-3, 2, 17], fov: 50 }}>
         <Scene />
       </Canvas>
-      <span className=" absolute right-[25%] bottom-[30%] w-fit animate-bounceYBack">
+      <span className=" absolute right-[27%] bottom-[30%] w-fit animate-bounceYBack">
         <Image
           src={"/pictures/mirror2.png"}
           width={1000}
